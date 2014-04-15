@@ -26,7 +26,7 @@ public class TestAnnotator extends JCasAnnotator_ImplBase {
 		Second s2 = new Second(doc, 5, 9);
 		s2.addToIndexes();
 		
-		First f = new First(doc, 1, 3);
+		First f = new First(doc, 6, 11);
 		
 		f.setAnnot(s1);
 		f.setBool(true);

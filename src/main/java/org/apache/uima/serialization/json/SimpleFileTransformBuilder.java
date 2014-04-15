@@ -28,7 +28,7 @@ public class SimpleFileTransformBuilder implements ITransformBuilder {
 		return loadTransformer(reverse);
 	}
 
-	private Transformer loadTransformer(String resource)
+	protected Transformer loadTransformer(String resource)
 		throws TransformerConfigurationException {
 		InputStream xsltStr = null;
 		try {

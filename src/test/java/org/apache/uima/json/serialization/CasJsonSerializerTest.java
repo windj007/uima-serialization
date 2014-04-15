@@ -14,15 +14,14 @@ import org.apache.uima.collection.CollectionReader;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.DocumentAnnotation;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.serialization.CasSerializerMetaFactory;
 import org.apache.uima.serialization.ICasSerializer;
 import org.apache.uima.serialization.SerializedCasFileReader;
 import org.apache.uima.serialization.SerializedCasFileWriter;
 import org.apache.uima.serialization.exceptions.CasSerializationException;
 import org.apache.uima.serialization.exceptions.SerializerInitializationException;
-import org.apache.uima.serialization.json.CasJsonSerializer;
+import org.apache.uima.serialization.exceptions.UnknownFactoryException;
 import org.apache.uima.serialization.json.CasJsonSerializerFactory;
-import org.apache.uima.serialization.json.ITransformBuilder;
-import org.apache.uima.serialization.json.TransformBuilderFactory;
 import org.apache.uima.serialization.json.test.TestAnnotator;
 import org.apache.uima.serialization.json.test.type.First;
 import org.apache.uima.serialization.json.test.type.Second;
@@ -41,14 +40,14 @@ public class CasJsonSerializerTest {
 	public void simpleSerializationTest()
 		throws ResourceInitializationException, IOException,
 		AnalysisEngineProcessException, SerializerInitializationException,
-		CasSerializationException {
+		CasSerializationException, UnknownFactoryException {
 
 		AnalysisEngine ae = AnalysisEngineFactory.createPrimitive(TestAnnotator.class);
 		JCas doc = ae.newJCas();
 		ae.process(doc);
 
-		ITransformBuilder trans = TransformBuilderFactory.getDefaultTransformBuilder();
-		ICasSerializer serializer = new CasJsonSerializer(trans, 4);
+		ICasSerializer serializer = CasSerializerMetaFactory.Instance().getFactory(
+			getSerializerFactory()).createSerializer();
 		String serialized = serializer.serialize(doc.getCas());
 
 		JCas doc2 = ae.newJCas();
@@ -60,9 +59,8 @@ public class CasJsonSerializerTest {
 
 	@Test
 	public void fileSerializationTest() throws ResourceInitializationException,
-		AnalysisEngineProcessException, IOException,
-		CasSerializationException, CollectionException,
-		SerializerInitializationException {
+		AnalysisEngineProcessException, IOException, CasSerializationException,
+		CollectionException, SerializerInitializationException {
 
 		// ************************* prepare document *************************
 		AnalysisEngine ae = AnalysisEngineFactory.createPrimitive(TestAnnotator.class);
@@ -77,7 +75,7 @@ public class CasJsonSerializerTest {
 			SerializedCasFileWriter.PARAM_OUTPUT_DIRECTORY_NAME,
 			dir,
 			SerializedCasFileWriter.PARAM_SERIALIZER_FACTORY,
-			CasJsonSerializerFactory.class );
+			getSerializerFactory());
 		writer.process(doc);
 
 		// **************************** deserialize ***************************
@@ -86,7 +84,7 @@ public class CasJsonSerializerTest {
 			SerializedCasFileReader.PARAM_INPUT_DIRECTORY,
 			dir,
 			SerializedCasFileReader.PARAM_SERIALIZER_FACTORY,
-			CasJsonSerializerFactory.class );
+			getSerializerFactory());
 
 		JCas doc2 = ae.newJCas();
 		reader.getNext(doc2.getCas());
@@ -112,7 +110,9 @@ public class CasJsonSerializerTest {
 			}
 		}
 
-		DocumentAnnotation docAnnot = JCasUtil.selectSingle(doc, DocumentAnnotation.class);
+		DocumentAnnotation docAnnot = JCasUtil.selectSingle(
+			doc,
+			DocumentAnnotation.class);
 		assertTrue(docAnnot != null);
 
 		Collection<First> firsts = JCasUtil.select(doc, First.class);
@@ -138,5 +138,9 @@ public class CasJsonSerializerTest {
 				assertTrue(f.getFirst() != null);
 			}
 		}
+	}
+
+	protected String getSerializerFactory() {
+		return CasJsonSerializerFactory.class.getName();
 	}
 }

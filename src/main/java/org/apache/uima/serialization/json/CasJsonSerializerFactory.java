@@ -6,14 +6,14 @@ import org.apache.uima.serialization.exceptions.SerializerInitializationExceptio
 
 public class CasJsonSerializerFactory implements ICasSerializerFactory {
 
-	private ITransformBuilder transformBuilder = TransformBuilderFactory.getDefaultTransformBuilder();
-	
-	public synchronized void setTransformBuilder(ITransformBuilder builder) {
-		transformBuilder = builder;
+	private ITransformBuilder	transformBuilder	= null;
+
+	public CasJsonSerializerFactory() {
+		this(TransformBuilderFactory.getDefaultTransformBuilder());
 	}
-	
-	public synchronized ITransformBuilder getTransformBuilder() {
-		return transformBuilder;
+
+	public CasJsonSerializerFactory(ITransformBuilder builder) {
+		this.transformBuilder = builder;
 	}
 
 	public synchronized ICasSerializer createSerializer()
