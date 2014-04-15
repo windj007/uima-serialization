@@ -1,4 +1,8 @@
-uima-json-serialization
+uima-serialization
 =======================
 
-Utility classes to serialize and deserialize UIMA's CASes to and from JSON.
+Library for serialization of Apache UIMA documents to and from arbitrary formats.
+
+For now JSON is supported only.
+
+For usage examples pleasee see tests (when I have more time I will add better documentation).
