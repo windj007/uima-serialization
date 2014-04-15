@@ -18,6 +18,7 @@
 			<xsl:for-each select="./*">
 				<xsl:call-template name="ordinaryNode" />
 			</xsl:for-each>
+			<text><xsl:value-of select="text()" /></text>
 		</children>
 
 	</xsl:template>

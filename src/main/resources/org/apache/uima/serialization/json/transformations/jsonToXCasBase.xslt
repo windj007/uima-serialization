@@ -13,6 +13,7 @@
 					<xsl:value-of select="." />
 				</xsl:attribute>
 			</xsl:for-each>
+			<xsl:value-of select="./text/text()" />
 			<xsl:for-each select="./children">
 				<xsl:call-template name="childrenNode" />
 			</xsl:for-each>
